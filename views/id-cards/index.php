@@ -10,6 +10,12 @@ ob_start();
         <p class="text-muted">Manage and generate resident ID cards</p>
     </div>
     <div>
+        <button type="button" class="btn btn-info me-2" onclick="printAllIdCards()">
+            <i class="fas fa-print"></i> Print All ID Cards
+        </button>
+        <button type="button" class="btn btn-success me-2" onclick="generateAllIdCards()">
+            <i class="fas fa-magic"></i> Generate All ID Cards
+        </button>
         <a href="id-cards.php?action=generate" class="btn btn-primary">
             <i class="fas fa-plus"></i> Generate New ID Card
         </a>
@@ -231,6 +237,52 @@ ob_start();
 function cancelCard(cardId) {
     document.getElementById('cancelCardId').value = cardId;
     new bootstrap.Modal(document.getElementById('cancelCardModal')).show();
+}
+
+function generateAllIdCards() {
+    if (confirm('This will generate ID cards for ALL residents who don\'t have active ID cards. This may take a few moments. Continue?')) {
+        // Show loading state
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        button.disabled = true;
+        
+        // Make AJAX request
+        fetch('id-cards.php?action=generate-all', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                csrf_token: '<?= $csrf_token ?>'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Successfully generated ${data.generated} ID cards!`);
+                location.reload(); // Refresh the page to show new cards
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while generating ID cards.');
+        })
+        .finally(() => {
+            // Restore button state
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+    }
+}
+
+function printAllIdCards() {
+    if (confirm('This will open all active ID cards in a new window for printing. Continue?')) {
+        // Open bulk print page in new window
+        window.open('id-cards.php?action=print-all', '_blank', 'width=1200,height=800');
+    }
 }
 </script>
 

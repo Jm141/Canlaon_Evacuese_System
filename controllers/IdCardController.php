@@ -91,6 +91,90 @@ class IdCardController extends Controller {
         ]);
     }
     
+    public function generateAll() {
+        $this->requireAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method.'], 405);
+        }
+        
+        // Get JSON input
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (!$input || !isset($input['csrf_token'])) {
+            $this->jsonResponse(['success' => false, 'message' => 'CSRF token required.'], 400);
+        }
+        
+        // Validate CSRF token
+        if (!$this->validateCSRFToken($input['csrf_token'])) {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token.'], 403);
+        }
+        
+        try {
+            $residentModel = new Resident();
+            $idCardModel = new IdCard();
+            
+            // Get all residents in the user's barangay
+            $barangayId = $this->getUserBarangayId();
+            $residents = $residentModel->getResidentsByBarangay($barangayId, 1, 1000); // Get up to 1000 residents
+            
+            $generatedCount = 0;
+            $errors = [];
+            
+            foreach ($residents as $resident) {
+                try {
+                    // Check if resident already has an active ID card
+                    $existingCard = $idCardModel->getActiveCardByResident($resident['id']);
+                    if (!$existingCard) {
+                        // Generate ID card for this resident
+                        $cardId = $idCardModel->generateIdCard($resident['id'], $_SESSION['user_id']);
+                        if ($cardId) {
+                            $generatedCount++;
+                        }
+                    }
+                } catch (Exception $e) {
+                    $errors[] = "Failed to generate ID card for {$resident['first_name']} {$resident['last_name']}: " . $e->getMessage();
+                }
+            }
+            
+            $message = "Successfully generated {$generatedCount} ID cards.";
+            if (!empty($errors)) {
+                $message .= " Errors: " . implode('; ', $errors);
+            }
+            
+            $this->jsonResponse([
+                'success' => true,
+                'generated' => $generatedCount,
+                'message' => $message
+            ]);
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+    
+    public function printAll() {
+        $this->requireAdmin();
+        
+        $idCardModel = new IdCard();
+        $barangayId = $this->getUserBarangayId();
+        
+        // Get all active ID cards for the barangay
+        $idCards = $idCardModel->getActiveIdCardsByBarangay($barangayId);
+        
+        // Generate barcodes for all cards
+        $barcodeGenerator = new BarcodeGenerator();
+        foreach ($idCards as &$card) {
+            $card['barcode_image'] = $barcodeGenerator->createBarcodeImage($card['card_number']);
+        }
+        
+        $this->render('id-cards/print-all', [
+            'pageTitle' => 'Print All ID Cards',
+            'currentPage' => 'id-cards',
+            'user' => $this->user,
+            'idCards' => $idCards
+        ]);
+    }
+    
     public function view() {
         $this->requireAdmin();
         

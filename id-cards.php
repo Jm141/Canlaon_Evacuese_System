@@ -36,6 +36,15 @@ switch ($action) {
     case 'view':
         $controller->view();
         break;
+    case 'generate':
+        $controller->generate();
+        break;
+    case 'generate-all':
+        $controller->generateAll();
+        break;
+    case 'print-all':
+        $controller->printAll();
+        break;
     default:
         $controller->index();
         break;
