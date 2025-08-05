@@ -79,7 +79,8 @@ class IdCard extends Model {
                        h.household_head, h.address, h.collection_point, h.evacuation_vehicle,
                        h.vehicle_driver, h.assigned_evacuation_center, h.phone_number as household_phone,
                        h.control_number, b.name as barangay_name, b.code as barangay_code,
-                       u.full_name as generated_by_name
+                       u.full_name as generated_by_name,
+                       (SELECT COUNT(*) FROM residents r2 WHERE r2.household_id = h.id AND r2.is_active = 1) as household_member_count
                 FROM id_cards ic
                 INNER JOIN residents r ON ic.resident_id = r.id
                 INNER JOIN households h ON r.household_id = h.id
@@ -115,6 +116,29 @@ class IdCard extends Model {
             'limit' => $limit,
             'offset' => $offset
         ]);
+    }
+    
+    /**
+     * Get active ID cards by barangay (for bulk printing)
+     */
+    public function getActiveIdCardsByBarangay($barangayId) {
+        $sql = "SELECT ic.*, r.first_name, r.last_name, r.middle_name, r.date_of_birth, 
+                       r.gender, r.civil_status, r.contact_number, r.emergency_contact_name, 
+                       r.emergency_contact_number, r.address, r.assigned_evacuation_center, 
+                       r.collection_point, r.evacuation_vehicle, r.vehicle_driver,
+                       h.household_head, h.control_number, b.name as barangay_name,
+                       u.full_name as generated_by_name,
+                       (SELECT COUNT(*) FROM residents r2 WHERE r2.household_id = h.id AND r2.is_active = 1) as household_member_count
+                FROM id_cards ic
+                INNER JOIN residents r ON ic.resident_id = r.id
+                INNER JOIN households h ON r.household_id = h.id
+                INNER JOIN barangays b ON h.barangay_id = b.id
+                LEFT JOIN users u ON ic.generated_by = u.id
+                WHERE h.barangay_id = :barangay_id 
+                AND ic.status = 'active'
+                ORDER BY r.last_name, r.first_name";
+        
+        return $this->query($sql, ['barangay_id' => $barangayId]);
     }
 
     /**

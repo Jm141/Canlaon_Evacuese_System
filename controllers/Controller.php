@@ -115,6 +115,13 @@ abstract class Controller {
             }
         }
     }
+    
+    /**
+     * Validate CSRF token for JSON requests
+     */
+    protected function validateCSRFToken($token) {
+        return isset($_SESSION['csrf_token']) && $token === $_SESSION['csrf_token'];
+    }
 
     /**
      * Generate CSRF token

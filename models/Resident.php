@@ -128,6 +128,18 @@ class Resident extends Model {
             'is_active' => 1
         ]);
     }
+    
+    /**
+     * Count household members
+     */
+    public function countHouseholdMembers($householdId) {
+        $sql = "SELECT COUNT(*) as count 
+                FROM residents 
+                WHERE household_id = :household_id AND is_active = 1";
+        
+        $result = $this->queryFirst($sql, ['household_id' => $householdId]);
+        return $result['count'] ?? 0;
+    }
 
     /**
      * Get residents by household (alias for getHouseholdMembers)

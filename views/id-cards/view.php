@@ -22,171 +22,179 @@ ob_start();
                 <!-- ID Card Design -->
                 <div class="id-card-container" style="max-width: 800px; margin: 0 auto;">
                     <div class="id-card" style="
-                        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-                        color: white;
+                        background: white;
+                        color: black;
                         padding: 2rem;
-                        border-radius: 1rem;
-                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                        border: 2px solid #000;
+                        border-radius: 0.5rem;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
                         position: relative;
-                        overflow: hidden;
+                        margin-bottom: 30px;
+                        font-family: Arial, sans-serif;
                     ">
                         <!-- Header -->
-                        <div class="text-center mb-4">
-                            <h2 style="margin: 0; font-weight: 700; font-size: 1.5rem;">
+                        <div style="text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #000; padding-bottom: 1rem;">
+                            <h2 style="margin: 0; font-weight: bold; font-size: 1.5rem; color: #000;">
                                 KANLAON EVACUATION PLAN
                             </h2>
-                            <h3 style="margin: 0.5rem 0 0 0; font-weight: 600; font-size: 1.25rem;">
+                            <h3 style="margin: 0.5rem 0 0 0; font-weight: bold; font-size: 1.25rem; color: #dc3545;">
                                 BAKWIT CARD
                             </h3>
                         </div>
 
-                        <div class="row">
-                            <!-- Left Column -->
-                            <div class="col-md-8">
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Household Head:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <?= htmlspecialchars($idCard['household_head']) ?>
-                                    </div>
+                        <!-- Main Information Section -->
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    HOUSEHOLD HEAD: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(PANGULO SANG PANIMALAY)</span>
                                 </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Family Members:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <?php
-                                        $residentModel = new Resident();
-                                        $members = $residentModel->getHouseholdMembers($idCard['household_id']);
-                                        echo count($members);
-                                        ?> persons
-                                    </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?= htmlspecialchars($idCard['household_head']) ?>
                                 </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Address:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <?= htmlspecialchars($idCard['address']) ?>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Collection Point:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <?= htmlspecialchars($idCard['collection_point'] ?? 'Not specified') ?>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Evacuation Vehicle:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <?= htmlspecialchars($idCard['evacuation_vehicle'] ?? 'Not assigned') ?>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Vehicle Driver:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <?= htmlspecialchars($idCard['vehicle_driver'] ?? 'Not assigned') ?>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Evacuation Center:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <?= htmlspecialchars($idCard['assigned_evacuation_center'] ?? 'Not assigned') ?>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Phone Number:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <?= htmlspecialchars($idCard['household_phone'] ?? 'Not provided') ?>
-                                    </div>
-                                </div>
-
-                                <?php if ($idCard['has_special_needs']): ?>
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <strong>Special Needs:</strong>
-                                    </div>
-                                    <div class="col-8">
-                                        <span class="badge bg-warning text-dark">
-                                            <?= htmlspecialchars($idCard['special_needs_description']) ?>
-                                        </span>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
                             </div>
-
-                            <!-- Right Column -->
-                            <div class="col-md-4">
-                                <div class="text-center">
-                                    <!-- Barcode -->
-                                    <div class="mb-3">
-                                        <img src="<?= $barcodeImage ?>" alt="Barcode" style="max-width: 100%; height: auto;">
+                            
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    NO. OF HOUSEHOLD MEMBERS: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(KADAMUON/KADAGHANON SA PANIMALAY)</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?= $idCard['household_member_count'] ?? 1 ?>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    ADDRESS: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(PULOY-AN/PUY-ANAN)</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?= htmlspecialchars($idCard['address']) ?>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    COLLECTION POINT/PICKUP POINT: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(TILIPUNAN PARA SA BAKWIT)</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?= htmlspecialchars($idCard['collection_point'] ?? 'Not specified') ?>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    VEHICLE FOR EVACUATION & DRIVER: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(SALAKYAN/SAKYANAN SA PAG BAKWIT KAG/UG DRAYBER)</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?= htmlspecialchars($idCard['evacuation_vehicle'] ?? 'Not specified') ?>
+                                    <?php if ($idCard['vehicle_driver']): ?>
+                                        / <?= htmlspecialchars($idCard['vehicle_driver']) ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    ASSIGNED EVACUATION CENTER: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(GINTALANA NGA EVACUATION CENTER)</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?= htmlspecialchars($idCard['assigned_evacuation_center'] ?? 'Not assigned') ?>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    PHONE NUMBER OF FAMILY LEADER: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(NUMERO SA SELPON SANG PANGULO SANG PANIMALAY)</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?= htmlspecialchars($idCard['contact_number'] ?? 'Not provided') ?>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    PERSONS WITH SPECIAL NEEDS: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(MIYEMBRO NGA MAY ESPESYAL NGA PANGINAHANGLANON)</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?php 
+                                    // This would need to be calculated from the database
+                                    echo "None"; // Placeholder - should be actual data
+                                    ?>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
+                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
+                                    STAYING INSIDE EVACUATION CENTER?: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(MUSULOD BA MO SA EVACUATION CENTER?)</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="width: 20px; height: 20px; border: 2px solid #000; display: inline-block; position: relative; <?= $idCard['assigned_evacuation_center'] ? 'background: #000;' : '' ?>">
+                                            <?php if ($idCard['assigned_evacuation_center']): ?>
+                                                <span style="position: absolute; top: -2px; left: 2px; font-weight: bold; color: white;">✓</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <span>YES (Oo)</span>
                                     </div>
-
-                                    <!-- Control Number -->
-                                    <div class="mb-3">
-                                        <strong>Control No:</strong><br>
-                                        <span style="font-size: 1.1rem; font-weight: 600;">
-                                            <?= htmlspecialchars($idCard['control_number']) ?>
-                                        </span>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="width: 20px; height: 20px; border: 2px solid #000; display: inline-block; position: relative; <?= !$idCard['assigned_evacuation_center'] ? 'background: #000;' : '' ?>">
+                                            <?php if (!$idCard['assigned_evacuation_center']): ?>
+                                                <span style="position: absolute; top: -2px; left: 2px; font-weight: bold; color: white;">✓</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <span>NO (Indi)</span>
                                     </div>
+                                </div>
+                                <div style="font-weight: bold; margin-left: 2rem;">
+                                    CONTROL NUMBER:
+                                </div>
+                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                    <?= htmlspecialchars($idCard['control_number']) ?>
+                                </div>
+                            </div>
+                        </div>
 
-                                    <!-- Card Number -->
-                                    <div class="mb-3">
-                                        <strong>Card No:</strong><br>
-                                        <span style="font-size: 1.1rem; font-weight: 600;">
-                                            <?= htmlspecialchars($idCard['card_number']) ?>
-                                        </span>
-                                    </div>
-
-                                    <!-- Issue Date -->
-                                    <div class="mb-3">
-                                        <strong>Issue Date:</strong><br>
-                                        <?= date('M d, Y', strtotime($idCard['issue_date'])) ?>
-                                    </div>
-
-                                    <!-- Expiry Date -->
-                                    <div class="mb-3">
-                                        <strong>Valid Until:</strong><br>
-                                        <?= date('M d, Y', strtotime($idCard['expiry_date'])) ?>
-                                    </div>
-
-                                    <!-- Status -->
-                                    <div class="mb-3">
-                                        <strong>Status:</strong><br>
-                                        <span class="badge bg-<?= $idCard['status'] === 'active' ? 'success' : ($idCard['status'] === 'expired' ? 'danger' : 'warning') ?>">
-                                            <?= ucfirst($idCard['status']) ?>
-                                        </span>
+                        <!-- Authority Section -->
+                        <div style="display: flex; justify-content: space-between; margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #000;">
+                            <div style="width: 120px; height: 120px; border: 2px dashed #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; font-size: 0.8rem; color: #666; text-align: center;">
+                                Place LGU logo here
+                            </div>
+                            
+                            <div style="flex-grow: 1; margin-left: 2rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div style="font-weight: bold;">LDRRMO</div>
+                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div style="font-weight: bold;">PUNONG BARANGAY</div>
+                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div style="font-weight: bold;">PUROK LEADER</div>
+                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div style="font-weight: bold;">LOCAL POLICE STATION</div>
+                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div style="font-weight: bold;">OFFICE OF CIVIL DEFENSE NIR:</div>
+                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 200px;">
+                                        09956112342 / 09177040134
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Footer -->
-                        <div class="text-center mt-4 pt-3" style="border-top: 1px solid rgba(255, 255, 255, 0.3);">
-                            <small style="opacity: 0.8;">
-                                This card is valid for evacuation purposes only.<br>
-                                Generated by: <?= htmlspecialchars($idCard['generated_by_name']) ?> | 
-                                Barangay: <?= htmlspecialchars($idCard['barangay_name']) ?>
-                            </small>
+                        <div style="text-align: center; margin-top: 1rem; font-weight: bold;">
+                            <div>REGIONAL TASK FORCE KANLAON</div>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem;">
+                                <div style="width: 60px; height: 60px; border: 2px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; font-size: 0.6rem; text-align: center;">
+                                    TASK FORCE KANLAON<br>
+                                    MOUNT KANLAON<br>
+                                    EMERGENCY RESPONSE
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -221,7 +229,7 @@ ob_start();
                                     <tr>
                                         <td><strong>Status:</strong></td>
                                         <td>
-                                            <span class="badge bg-<?= $idCard['status'] === 'active' ? 'success' : ($idCard['status'] === 'expired' ? 'danger' : 'warning') ?>">
+                                            <span class="badge bg-<?= $idCard['status'] === 'active' ? 'success' : 'danger' ?>">
                                                 <?= ucfirst($idCard['status']) ?>
                                             </span>
                                         </td>
@@ -265,43 +273,10 @@ ob_start();
                                         <td><?= htmlspecialchars($idCard['contact_number'] ?? 'Not provided') ?></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Barangay:</strong></td>
-                                        <td><?= htmlspecialchars($idCard['barangay_name']) ?></td>
+                                        <td><strong>Address:</strong></td>
+                                        <td><?= htmlspecialchars($idCard['address']) ?></td>
                                     </tr>
                                 </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="card-title mb-0">
-                                    <i class="fas fa-cogs"></i> Actions
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-flex gap-2">
-                                    <button onclick="window.print()" class="btn btn-primary">
-                                        <i class="fas fa-print"></i> Print ID Card
-                                    </button>
-                                    <a href="id-cards.php?action=generate&resident_id=<?= $idCard['resident_id'] ?>" 
-                                       class="btn btn-success">
-                                        <i class="fas fa-plus"></i> Generate New Card
-                                    </a>
-                                    <?php if ($idCard['status'] === 'active'): ?>
-                                    <button onclick="cancelCard(<?= $idCard['id'] ?>)" class="btn btn-danger">
-                                        <i class="fas fa-times"></i> Cancel Card
-                                    </button>
-                                    <?php endif; ?>
-                                    <a href="residents.php?action=view&id=<?= $idCard['resident_id'] ?>" 
-                                       class="btn btn-info">
-                                        <i class="fas fa-user"></i> View Resident
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -312,48 +287,8 @@ ob_start();
 </div>
 
 <script>
-function cancelCard(cardId) {
-    if (confirm('Are you sure you want to cancel this ID card? This action cannot be undone.')) {
-        fetch('id-cards.php?ajax=cancel', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'card_id=' + cardId
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                window.location.reload();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while cancelling the card.');
-        });
-    }
-}
+// Add any JavaScript functionality here if needed
 </script>
-
-<style>
-@media print {
-    .id-card {
-        box-shadow: none !important;
-        border: 2px solid #000 !important;
-    }
-    
-    .btn, .card-header, .card-body:not(:first-child) {
-        display: none !important;
-    }
-    
-    .id-card-container {
-        max-width: none !important;
-    }
-}
-</style>
 
 <?php
 $content = ob_get_clean();
