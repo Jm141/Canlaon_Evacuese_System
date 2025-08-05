@@ -26,11 +26,13 @@ ob_start();
                         color: black;
                         padding: 2rem;
                         border: 2px solid #000;
-                        border-radius: 0.5rem;
+                        border-radius: 0;
                         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
                         position: relative;
                         margin-bottom: 30px;
                         font-family: Arial, sans-serif;
+                        font-size: 14px;
+                        line-height: 1.4;
                     ">
                         <!-- Header -->
                         <div style="text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #000; padding-bottom: 1rem;">
@@ -147,8 +149,20 @@ ob_start();
                                 <div style="font-weight: bold; margin-left: 2rem;">
                                     CONTROL NUMBER:
                                 </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?= htmlspecialchars($idCard['control_number']) ?>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-grow: 1; margin-left: 1rem;">
+                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                        <?= htmlspecialchars($idCard['control_number']) ?>
+                                    </div>
+                                    <div style="flex-shrink: 0; margin-left: 0.5rem;">
+                                        <?php 
+                                        // Generate barcode for control number
+                                        $barcodeGenerator = new BarcodeGenerator();
+                                        $controlBarcode = $barcodeGenerator->createBarcodeImage($idCard['control_number']);
+                                        ?>
+                                        <img src="data:image/png;base64,<?= base64_encode($controlBarcode) ?>" 
+                                             alt="Control Number Barcode" 
+                                             style="width: 60px; height: 30px; object-fit: contain;">
+                                    </div>
                                 </div>
                             </div>
                         </div>

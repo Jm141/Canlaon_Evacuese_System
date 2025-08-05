@@ -13,42 +13,64 @@ ob_start();
     <style>
         @media print {
             .no-print { display: none !important; }
-            .id-card { page-break-inside: avoid; margin-bottom: 20px; }
+            .page-break { page-break-before: always; }
+            .id-card { page-break-inside: avoid; }
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: white;
+        }
+        
+        .page {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            padding: 10mm;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 5mm;
+            page-break-after: always;
+        }
+        
+        .page:last-child {
+            page-break-after: avoid;
         }
         
         .id-card {
             background: white;
-            color: black;
-            padding: 2rem;
             border: 2px solid #000;
-            border-radius: 0.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 8mm;
+            box-sizing: border-box;
+            font-size: 8pt;
+            line-height: 1.2;
             position: relative;
-            margin-bottom: 30px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
         }
         
         .card-header {
             text-align: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #000;
-            padding-bottom: 1rem;
+            margin-bottom: 4mm;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2mm;
         }
         
         .card-title {
-            font-size: 1.5rem;
+            font-size: 12pt;
             font-weight: bold;
             margin: 0;
             color: #000;
         }
         
         .card-subtitle {
-            font-size: 1.25rem;
+            font-size: 10pt;
             font-weight: bold;
-            margin: 0.5rem 0 0 0;
+            margin: 1mm 0 0 0;
             color: #dc3545;
         }
         
@@ -58,18 +80,20 @@ ob_start();
         
         .form-row {
             display: flex;
-            margin-bottom: 0.75rem;
+            margin-bottom: 2mm;
             align-items: baseline;
+            min-height: 4mm;
         }
         
         .form-label {
             font-weight: bold;
-            min-width: 200px;
+            min-width: 35mm;
             flex-shrink: 0;
+            font-size: 7pt;
         }
         
         .form-label-local {
-            font-size: 0.8rem;
+            font-size: 6pt;
             color: #666;
             font-style: italic;
         }
@@ -77,108 +101,118 @@ ob_start();
         .form-value {
             border-bottom: 1px solid #000;
             flex-grow: 1;
-            margin-left: 1rem;
-            padding-bottom: 0.25rem;
-            min-height: 1.2rem;
+            margin-left: 2mm;
+            padding-bottom: 1mm;
+            min-height: 3mm;
+            font-size: 7pt;
         }
         
         .checkbox-group {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 2mm;
         }
         
         .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 1mm;
         }
         
         .checkbox-box {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #000;
+            width: 3mm;
+            height: 3mm;
+            border: 1px solid #000;
             display: inline-block;
             position: relative;
+        }
+        
+        .checkbox-box.checked {
+            background: #000;
         }
         
         .checkbox-box.checked::after {
             content: '✓';
             position: absolute;
-            top: -2px;
-            left: 2px;
+            top: -1mm;
+            left: 0.5mm;
             font-weight: bold;
+            color: white;
+            font-size: 6pt;
         }
         
         .authority-section {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 2px solid #000;
+            margin-top: 3mm;
+            padding-top: 2mm;
+            border-top: 1px solid #000;
+            flex-grow: 1;
         }
         
         .logo-placeholder {
-            width: 120px;
-            height: 120px;
-            border: 2px dashed #ccc;
+            width: 15mm;
+            height: 15mm;
+            border: 1px dashed #ccc;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #f8f9fa;
-            font-size: 0.8rem;
+            font-size: 5pt;
             color: #666;
             text-align: center;
+            flex-shrink: 0;
         }
         
         .authority-list {
             flex-grow: 1;
-            margin-left: 2rem;
+            margin-left: 3mm;
         }
         
         .authority-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1mm;
         }
         
         .authority-name {
             font-weight: bold;
+            font-size: 6pt;
         }
         
         .authority-line {
             border-bottom: 1px solid #000;
             flex-grow: 1;
-            margin-left: 1rem;
-            min-width: 150px;
+            margin-left: 2mm;
+            min-width: 20mm;
         }
         
         .footer {
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 2mm;
             font-weight: bold;
+            font-size: 7pt;
         }
         
         .footer-logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 0.5rem;
+            margin-top: 1mm;
         }
         
         .volcano-logo {
-            width: 60px;
-            height: 60px;
-            border: 2px solid #000;
+            width: 8mm;
+            height: 8mm;
+            border: 1px solid #000;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #f8f9fa;
-            font-size: 0.6rem;
+            font-size: 4pt;
             text-align: center;
         }
         
@@ -202,7 +236,7 @@ ob_start();
     <!-- Print Header -->
     <div class="print-header no-print">
         <h1>Kanlaon Evacuation Plan - ID Cards</h1>
-        <p class="text-muted">Bulk Print - <?= count($idCards) ?> ID Cards</p>
+        <p class="text-muted">Bulk Print - <?= count($idCards) ?> ID Cards (4 per page)</p>
         <div class="btn-group">
             <button onclick="window.print()" class="btn btn-primary">
                 <i class="fas fa-print"></i> Print All
@@ -224,168 +258,191 @@ ob_start();
             <div class="col-md-6">
                 <strong>Barangay:</strong> <?= htmlspecialchars($user['barangay_name'] ?? 'All Barangays') ?><br>
                 <strong>Status:</strong> Active ID Cards Only<br>
-                <strong>Print Format:</strong> A4 Size
+                <strong>Print Format:</strong> A4 Size (4 cards per page)
             </div>
         </div>
     </div>
     
-    <!-- ID Cards -->
-    <?php foreach ($idCards as $card): ?>
-    <div class="id-card">
-        <!-- Header -->
-        <div class="card-header">
-            <div class="card-title">KANLAON EVACUATION PLAN</div>
-            <div class="card-subtitle">BAKWIT CARD</div>
-        </div>
+    <!-- ID Cards Pages -->
+    <?php 
+    $cardsPerPage = 4;
+    $totalPages = ceil(count($idCards) / $cardsPerPage);
+    
+    for ($page = 0; $page < $totalPages; $page++): 
+        $startIndex = $page * $cardsPerPage;
+        $pageCards = array_slice($idCards, $startIndex, $cardsPerPage);
+    ?>
+    <div class="page <?= $page > 0 ? 'page-break' : '' ?>">
+        <?php foreach ($pageCards as $card): ?>
+        <div class="id-card">
+            <!-- Header -->
+            <div class="card-header">
+                <div class="card-title">KANLAON EVACUATION PLAN</div>
+                <div class="card-subtitle">BAKWIT CARD</div>
+            </div>
 
-        <!-- Main Information Section -->
-        <div class="form-section">
-            <div class="form-row">
-                <div class="form-label">
-                    HOUSEHOLD HEAD: <span class="form-label-local">(PANGULO SANG PANIMALAY)</span>
-                </div>
-                <div class="form-value">
-                    <?= htmlspecialchars($card['household_head']) ?>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-label">
-                    NO. OF HOUSEHOLD MEMBERS: <span class="form-label-local">(KADAMUON/KADAGHANON SA PANIMALAY)</span>
-                </div>
-                <div class="form-value">
-                    <?= $card['household_member_count'] ?? 1 ?>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-label">
-                    ADDRESS: <span class="form-label-local">(PULOY-AN/PUY-ANAN)</span>
-                </div>
-                <div class="form-value">
-                    <?= htmlspecialchars($card['address']) ?>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-label">
-                    COLLECTION POINT/PICKUP POINT: <span class="form-label-local">(TILIPUNAN PARA SA BAKWIT)</span>
-                </div>
-                <div class="form-value">
-                    <?= htmlspecialchars($card['collection_point'] ?? 'Not specified') ?>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-label">
-                    VEHICLE FOR EVACUATION & DRIVER: <span class="form-label-local">(SALAKYAN/SAKYANAN SA PAG BAKWIT KAG/UG DRAYBER)</span>
-                </div>
-                <div class="form-value">
-                    <?= htmlspecialchars($card['evacuation_vehicle'] ?? 'Not specified') ?>
-                    <?php if ($card['vehicle_driver']): ?>
-                        / <?= htmlspecialchars($card['vehicle_driver']) ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-label">
-                    ASSIGNED EVACUATION CENTER: <span class="form-label-local">(GINTALANA NGA EVACUATION CENTER)</span>
-                </div>
-                <div class="form-value">
-                    <?= htmlspecialchars($card['assigned_evacuation_center'] ?? 'Not assigned') ?>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-label">
-                    PHONE NUMBER OF FAMILY LEADER: <span class="form-label-local">(NUMERO SA SELPON SANG PANGULO SANG PANIMALAY)</span>
-                </div>
-                <div class="form-value">
-                    <?= htmlspecialchars($card['contact_number'] ?? 'Not provided') ?>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-label">
-                    PERSONS WITH SPECIAL NEEDS: <span class="form-label-local">(MIYEMBRO NGA MAY ESPESYAL NGA PANGINAHANGLANON)</span>
-                </div>
-                <div class="form-value">
-                    <?php 
-                    // This would need to be calculated from the database
-                    echo "None"; // Placeholder - should be actual data
-                    ?>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-label">
-                    STAYING INSIDE EVACUATION CENTER?: <span class="form-label-local">(MUSULOD BA MO SA EVACUATION CENTER?)</span>
-                </div>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <div class="checkbox-box <?= $card['assigned_evacuation_center'] ? 'checked' : '' ?>"></div>
-                        <span>YES (Oo)</span>
+            <!-- Main Information Section -->
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-label">
+                        HOUSEHOLD HEAD: <span class="form-label-local">(PANGULO SANG PANIMALAY)</span>
                     </div>
-                    <div class="checkbox-item">
-                        <div class="checkbox-box <?= !$card['assigned_evacuation_center'] ? 'checked' : '' ?>"></div>
-                        <span>NO (Indi)</span>
+                    <div class="form-value">
+                        <?= htmlspecialchars($card['household_head']) ?>
                     </div>
                 </div>
-                <div class="form-label" style="margin-left: 2rem;">
-                    CONTROL NUMBER:
+                
+                <div class="form-row">
+                    <div class="form-label">
+                        NO. OF HOUSEHOLD MEMBERS: <span class="form-label-local">(KADAMUON/KADAGHANON SA PANIMALAY)</span>
+                    </div>
+                    <div class="form-value">
+                        <?= $card['household_member_count'] ?? 1 ?>
+                    </div>
                 </div>
-                <div class="form-value">
-                    <?= htmlspecialchars($card['control_number']) ?>
+                
+                <div class="form-row">
+                    <div class="form-label">
+                        ADDRESS: <span class="form-label-local">(PULOY-AN/PUY-ANAN)</span>
+                    </div>
+                    <div class="form-value">
+                        <?= htmlspecialchars($card['address']) ?>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Authority Section -->
-        <div class="authority-section">
-            <div class="logo-placeholder">
-                Place LGU logo here
-            </div>
-            
-            <div class="authority-list">
-                <div class="authority-item">
-                    <div class="authority-name">LDRRMO</div>
-                    <div class="authority-line"></div>
+                
+                <div class="form-row">
+                    <div class="form-label">
+                        COLLECTION POINT/PICKUP POINT: <span class="form-label-local">(TILIPUNAN PARA SA BAKWIT)</span>
+                    </div>
+                    <div class="form-value">
+                        <?= htmlspecialchars($card['collection_point'] ?? 'Not specified') ?>
+                    </div>
                 </div>
-                <div class="authority-item">
-                    <div class="authority-name">PUNONG BARANGAY</div>
-                    <div class="authority-line"></div>
+                
+                <div class="form-row">
+                    <div class="form-label">
+                        VEHICLE FOR EVACUATION & DRIVER: <span class="form-label-local">(SALAKYAN/SAKYANAN SA PAG BAKWIT KAG/UG DRAYBER)</span>
+                    </div>
+                    <div class="form-value">
+                        <?= htmlspecialchars($card['evacuation_vehicle'] ?? 'Not specified') ?>
+                        <?php if ($card['vehicle_driver']): ?>
+                            / <?= htmlspecialchars($card['vehicle_driver']) ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
-                <div class="authority-item">
-                    <div class="authority-name">PUROK LEADER</div>
-                    <div class="authority-line"></div>
+                
+                <div class="form-row">
+                    <div class="form-label">
+                        ASSIGNED EVACUATION CENTER: <span class="form-label-local">(GINTALANA NGA EVACUATION CENTER)</span>
+                    </div>
+                    <div class="form-value">
+                        <?= htmlspecialchars($card['assigned_evacuation_center'] ?? 'Not assigned') ?>
+                    </div>
                 </div>
-                <div class="authority-item">
-                    <div class="authority-name">LOCAL POLICE STATION</div>
-                    <div class="authority-line"></div>
+                
+                <div class="form-row">
+                    <div class="form-label">
+                        PHONE NUMBER OF FAMILY LEADER: <span class="form-label-local">(NUMERO SA SELPON SANG PANGULO SANG PANIMALAY)</span>
+                    </div>
+                    <div class="form-value">
+                        <?= htmlspecialchars($card['contact_number'] ?? 'Not provided') ?>
+                    </div>
                 </div>
-                <div class="authority-item">
-                    <div class="authority-name">OFFICE OF CIVIL DEFENSE NIR:</div>
-                    <div class="authority-line" style="min-width: 200px;">
-                        09956112342 / 09177040134
+                
+                <div class="form-row">
+                    <div class="form-label">
+                        PERSONS WITH SPECIAL NEEDS: <span class="form-label-local">(MIYEMBRO NGA MAY ESPESYAL NGA PANGINAHANGLANON)</span>
+                    </div>
+                    <div class="form-value">
+                        <?php 
+                        // This would need to be calculated from the database
+                        echo "None"; // Placeholder - should be actual data
+                        ?>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label">
+                        STAYING INSIDE EVACUATION CENTER?: <span class="form-label-local">(MUSULOD BA MO SA EVACUATION CENTER?)</span>
+                    </div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <div class="checkbox-box <?= $card['assigned_evacuation_center'] ? 'checked' : '' ?>"></div>
+                            <span style="font-size: 6pt;">YES (Oo)</span>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-box <?= !$card['assigned_evacuation_center'] ? 'checked' : '' ?>"></div>
+                            <span style="font-size: 6pt;">NO (Indi)</span>
+                        </div>
+                    </div>
+                    <div class="form-label" style="margin-left: 3mm;">
+                        CONTROL NUMBER:
+                    </div>
+                    <div class="form-value" style="display: flex; align-items: center; gap: 1mm;">
+                        <div style="flex-grow: 1; border-bottom: 1px solid #000; padding-bottom: 1mm; min-height: 3mm;">
+                            <?= htmlspecialchars($card['control_number']) ?>
+                        </div>
+                        <div style="flex-shrink: 0; margin-left: 1mm;">
+                            <?php 
+                            // Generate barcode for control number
+                            $barcodeGenerator = new BarcodeGenerator();
+                            $controlBarcode = $barcodeGenerator->createBarcodeImage($card['control_number']);
+                            ?>
+                            <img src="data:image/png;base64,<?= base64_encode($controlBarcode) ?>" 
+                                 alt="Control Number Barcode" 
+                                 style="width: 15mm; height: 8mm; object-fit: contain;">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <div>REGIONAL TASK FORCE KANLAON</div>
-            <div class="footer-logo">
-                <div class="volcano-logo">
-                    TASK FORCE KANLAON<br>
-                    MOUNT KANLAON<br>
-                    EMERGENCY RESPONSE
+            <!-- Authority Section -->
+            <div class="authority-section">
+                <div class="logo-placeholder">
+                    Place LGU logo here
+                </div>
+                
+                <div class="authority-list">
+                    <div class="authority-item">
+                        <div class="authority-name">LDRRMO</div>
+                        <div class="authority-line"></div>
+                    </div>
+                    <div class="authority-item">
+                        <div class="authority-name">PUNONG BARANGAY</div>
+                        <div class="authority-line"></div>
+                    </div>
+                    <div class="authority-item">
+                        <div class="authority-name">PUROK LEADER</div>
+                        <div class="authority-line"></div>
+                    </div>
+                    <div class="authority-item">
+                        <div class="authority-name">LOCAL POLICE STATION</div>
+                        <div class="authority-line"></div>
+                    </div>
+                    <div class="authority-item">
+                        <div class="authority-name">OFFICE OF CIVIL DEFENSE NIR:</div>
+                        <div class="authority-line" style="min-width: 25mm;">
+                            09956112342 / 09177040134
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div>REGIONAL TASK FORCE KANLAON</div>
+                <div class="footer-logo">
+                    <div class="volcano-logo">
+                        TASK FORCE KANLAON<br>
+                        MOUNT KANLAON<br>
+                        EMERGENCY RESPONSE
+                    </div>
                 </div>
             </div>
         </div>
+        <?php endforeach; ?>
     </div>
-    <?php endforeach; ?>
+    <?php endfor; ?>
     
     <!-- Print Footer -->
     <div class="text-center mt-4 no-print">
@@ -393,6 +450,7 @@ ob_start();
             <small>
                 Generated on <?= date('F j, Y g:i A') ?> | 
                 Total Cards: <?= count($idCards) ?> | 
+                Pages: <?= $totalPages ?> | 
                 Kanlaon Evacuation Plan System
             </small>
         </p>
