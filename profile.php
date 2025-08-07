@@ -1,5 +1,6 @@
 <?php
 require_once 'config/config.php';
+require_once 'Controller.php';
 require_once 'controllers/ProfileController.php';
 
 // Handle AJAX requests

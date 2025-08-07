@@ -149,6 +149,32 @@ CREATE TABLE IF NOT EXISTS `residents` (
     FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `evacuation_centers` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(150) NOT NULL,
+    `barangay_id` INT(11) NOT NULL,
+    `address` TEXT NOT NULL,
+    `capacity` INT(11) NOT NULL DEFAULT 0,
+    `current_occupancy` INT(11) NOT NULL DEFAULT 0,
+    `contact_person` VARCHAR(100) NULL,
+    `contact_number` VARCHAR(20) NULL,
+    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_by` INT(11) NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_barangay_id` (`barangay_id`),
+    INDEX `idx_name` (`name`),
+    INDEX `idx_is_active` (`is_active`),
+    INDEX `idx_capacity` (`capacity`),
+    INDEX `idx_current_occupancy` (`current_occupancy`),
+    INDEX `idx_created_by` (`created_by`),
+    FOREIGN KEY (`barangay_id`) REFERENCES `barangays`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT `chk_capacity_positive` CHECK (`capacity` >= 0),
+    CONSTRAINT `chk_occupancy_valid` CHECK (`current_occupancy` >= 0 AND `current_occupancy` <= `capacity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- =====================================================
 -- ID CARDS TABLE
 -- =====================================================

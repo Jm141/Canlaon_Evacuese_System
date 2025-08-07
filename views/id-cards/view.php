@@ -1,297 +1,210 @@
 <?php
+// Start output buffering to capture content
 ob_start();
 ?>
 
-<div class="row">
-    <div class="col-lg-8 mx-auto">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title">
-                    <i class="fas fa-id-card"></i> ID Card Details
-                </h5>
-                <div>
-                    <button onclick="window.print()" class="btn btn-primary btn-sm">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>ID Card Details</h2>
+                <div class="btn-group">
+                    <a href="id-cards.php" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                    <button onclick="window.print()" class="btn btn-primary">
                         <i class="fas fa-print"></i> Print
                     </button>
-                    <a href="id-cards.php" class="btn btn-secondary btn-sm">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </a>
                 </div>
             </div>
-            <div class="card-body">
-                <!-- ID Card Design -->
-                <div class="id-card-container" style="max-width: 800px; margin: 0 auto;">
-                    <div class="id-card" style="
-                        background: white;
-                        color: black;
-                        padding: 2rem;
-                        border: 2px solid #000;
-                        border-radius: 0;
-                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-                        position: relative;
-                        margin-bottom: 30px;
-                        font-family: Arial, sans-serif;
-                        font-size: 14px;
-                        line-height: 1.4;
-                    ">
-                        <!-- Header -->
-                        <div style="text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #000; padding-bottom: 1rem;">
-                            <h2 style="margin: 0; font-weight: bold; font-size: 1.5rem; color: #000;">
-                                KANLAON EVACUATION PLAN
-                            </h2>
-                            <h3 style="margin: 0.5rem 0 0 0; font-weight: bold; font-size: 1.25rem; color: #dc3545;">
-                                BAKWIT CARD
-                            </h3>
-                        </div>
 
-                        <!-- Main Information Section -->
-                        <div style="margin-bottom: 1.5rem;">
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    HOUSEHOLD HEAD: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(PANGULO SANG PANIMALAY)</span>
-                                </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?= htmlspecialchars($idCard['household_head']) ?>
-                                </div>
+            <!-- Print Header (Hidden when printing) -->
+            <div class="print-header mb-4" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>ID Card Information</h5>
+                                <p><strong>Resident:</strong> <?= htmlspecialchars($idCard['first_name'] . ' ' . $idCard['last_name']) ?></p>
+                                <p><strong>Control Number:</strong> <?= htmlspecialchars($idCard['control_number']) ?></p>
+                                <p><strong>Status:</strong> <span class="badge bg-<?= $idCard['status'] === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($idCard['status']) ?></span></p>
                             </div>
-                            
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    NO. OF HOUSEHOLD MEMBERS: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(KADAMUON/KADAGHANON SA PANIMALAY)</span>
-                                </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?= $idCard['household_member_count'] ?? 1 ?>
-                                </div>
+                            <div class="col-md-6">
+                                <h5>Generation Details</h5>
+                                <p><strong>Generated By:</strong> <?= htmlspecialchars($idCard['generated_by_name'] ?? 'System') ?></p>
+                                <p><strong>Generated On:</strong> <?= date('F j, Y g:i A', strtotime($idCard['created_at'])) ?></p>
+                                <p><strong>Barangay:</strong> <?= htmlspecialchars($idCard['barangay_name']) ?></p>
                             </div>
-                            
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    ADDRESS: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(PULOY-AN/PUY-ANAN)</span>
-                                </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?= htmlspecialchars($idCard['address']) ?>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    COLLECTION POINT/PICKUP POINT: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(TILIPUNAN PARA SA BAKWIT)</span>
-                                </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?= htmlspecialchars($idCard['collection_point'] ?? 'Not specified') ?>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    VEHICLE FOR EVACUATION & DRIVER: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(SALAKYAN/SAKYANAN SA PAG BAKWIT KAG/UG DRAYBER)</span>
-                                </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?= htmlspecialchars($idCard['evacuation_vehicle'] ?? 'Not specified') ?>
-                                    <?php if ($idCard['vehicle_driver']): ?>
-                                        / <?= htmlspecialchars($idCard['vehicle_driver']) ?>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    ASSIGNED EVACUATION CENTER: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(GINTALANA NGA EVACUATION CENTER)</span>
-                                </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?= htmlspecialchars($idCard['assigned_evacuation_center'] ?? 'Not assigned') ?>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    PHONE NUMBER OF FAMILY LEADER: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(NUMERO SA SELPON SANG PANGULO SANG PANIMALAY)</span>
-                                </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?= htmlspecialchars($idCard['contact_number'] ?? 'Not provided') ?>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    PERSONS WITH SPECIAL NEEDS: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(MIYEMBRO NGA MAY ESPESYAL NGA PANGINAHANGLANON)</span>
-                                </div>
-                                <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; padding-bottom: 0.25rem; min-height: 1.2rem;">
-                                    <?php 
-                                    // This would need to be calculated from the database
-                                    echo "None"; // Placeholder - should be actual data
-                                    ?>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 0.75rem; align-items: baseline;">
-                                <div style="font-weight: bold; min-width: 200px; flex-shrink: 0;">
-                                    STAYING INSIDE EVACUATION CENTER?: <span style="font-size: 0.8rem; color: #666; font-style: italic;">(MUSULOD BA MO SA EVACUATION CENTER?)</span>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <div style="width: 20px; height: 20px; border: 2px solid #000; display: inline-block; position: relative; <?= $idCard['assigned_evacuation_center'] ? 'background: #000;' : '' ?>">
-                                            <?php if ($idCard['assigned_evacuation_center']): ?>
-                                                <span style="position: absolute; top: -2px; left: 2px; font-weight: bold; color: white;">✓</span>
-                                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ID Card Display -->
+            <div class="id-card" style="background: white; color: black; padding: 2rem; border: 2px solid #000; border-radius: 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); position: relative; margin-bottom: 30px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4; max-width: 800px; margin: 0 auto;">
+                <!-- Header -->
+                <div class="card-header" style="text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #000; padding-bottom: 1rem;">
+                    <div class="card-title" style="font-size: 1.5rem; font-weight: bold; margin: 0; color: #000; text-transform: uppercase;">
+                        KANLAON EVACUATION PLAN
+                    </div>
+                    <div class="card-subtitle" style="font-size: 1.25rem; font-weight: bold; margin: 0.5rem 0 0 0; color: #dc3545; text-transform: uppercase;">
+                        BAKWIT CARD
+                    </div>
+                </div>
+
+                <!-- Main Information Section -->
+                <div class="form-section" style="margin-bottom: 1.5rem;">
+                    <table class="form-table" style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                HOUSEHOLD HEAD:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(PANGULO SANG PANIMALAY)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <?= htmlspecialchars($idCard['household_head']) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                NO. OF HOUSEHOLD MEMBERS:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(KADAMUON/KADAGHANON SA PANIMALAY)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <?= htmlspecialchars($idCard['household_member_count'] ?? '1') ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                ADDRESS:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(PULOY-AN/PUY-ANAN)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <?= htmlspecialchars($idCard['address']) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                COLLECTION POINT/PICKUP POINT:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(TILIPUNAN PARA SA BAKWIT)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <?= htmlspecialchars($idCard['collection_point'] ?? 'N/A') ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                VEHICLE FOR EVACUATION & DRIVER:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(SALAKYAN/SAKYANAN SA PAG BAKWIT KAG/UG DRAYBER)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <?= htmlspecialchars($idCard['evacuation_vehicle'] ?? 'N/A') ?> / <?= htmlspecialchars($idCard['vehicle_driver'] ?? 'N/A') ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                ASSIGNED EVACUATION CENTER:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(GINTALANA NGA EVACUATION CENTER)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <?= htmlspecialchars($idCard['assigned_evacuation_center'] ?? 'N/A') ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                PHONE NUMBER OF FAMILY LEADER:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(NUMERO SA SELPON SANG PANGULO SANG PANIMALAY)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <?= htmlspecialchars($idCard['contact_number'] ?? 'N/A') ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                PERSONS WITH SPECIAL NEEDS:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(MIYEMBRO NGA MAY ESPESYAL NGA PANGINAHANGLANON)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <?= htmlspecialchars($idCard['emergency_contact_name'] ?? 'N/A') ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 40%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
+                                STAYING INSIDE EVACUATION CENTER?:
+                                <span class="form-label-local" style="font-size: 0.8rem; color: #666; font-style: italic; text-transform: none; font-weight: normal; display: block; margin-top: 0.2rem;">(MUSULOD BA MO SA EVACUATION CENTER?)</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; vertical-align: top; width: 60%; border-bottom: 1px solid #000; padding-bottom: 0.25rem;">
+                                <div class="checkbox-group" style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="checkbox-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div class="checkbox-box checked" style="width: 20px; height: 20px; border: 2px solid #000; display: inline-block; position: relative; background: #000;">
+                                            <span style="position: absolute; top: -2px; left: 2px; font-weight: bold; color: white;">✓</span>
                                         </div>
                                         <span>YES (Oo)</span>
                                     </div>
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <div style="width: 20px; height: 20px; border: 2px solid #000; display: inline-block; position: relative; <?= !$idCard['assigned_evacuation_center'] ? 'background: #000;' : '' ?>">
-                                            <?php if (!$idCard['assigned_evacuation_center']): ?>
-                                                <span style="position: absolute; top: -2px; left: 2px; font-weight: bold; color: white;">✓</span>
-                                            <?php endif; ?>
-                                        </div>
+                                    <div class="checkbox-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div class="checkbox-box" style="width: 20px; height: 20px; border: 2px solid #000; display: inline-block; position: relative;"></div>
                                         <span>NO (Indi)</span>
                                     </div>
                                 </div>
-                                <div style="font-weight: bold; margin-left: 2rem;">
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Control Number Section -->
+                    <div class="control-number-section" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ccc;">
+                        <table class="control-number-table" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 0.5rem 0; vertical-align: middle; width: 30%; font-weight: bold; text-transform: uppercase; padding-right: 1rem;">
                                     CONTROL NUMBER:
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-grow: 1; margin-left: 1rem;">
-                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; padding-bottom: 0.25rem; min-height: 1.2rem;">
+                                </td>
+                                <td style="padding: 0.5rem 0; vertical-align: middle; width: 70%;">
+                                    <div class="control-number-box" style="border: 1px solid #000; padding: 0.5rem 1rem; text-align: center; font-weight: bold; background: #f8f9fa; display: inline-block; min-width: 200px;">
                                         <?= htmlspecialchars($idCard['control_number']) ?>
                                     </div>
-                                    <div style="flex-shrink: 0; margin-left: 0.5rem;">
-                                        <?php 
-                                        // Generate barcode for control number
-                                        $barcodeGenerator = new BarcodeGenerator();
-                                        $controlBarcode = $barcodeGenerator->createBarcodeImage($idCard['control_number']);
-                                        ?>
-                                        <img src="data:image/png;base64,<?= base64_encode($controlBarcode) ?>" 
-                                             alt="Control Number Barcode" 
-                                             style="width: 60px; height: 30px; object-fit: contain;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
-                        <!-- Authority Section -->
-                        <div style="display: flex; justify-content: space-between; margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #000;">
-                            <div style="width: 120px; height: 120px; border: 2px dashed #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; font-size: 0.8rem; color: #666; text-align: center;">
-                                Place LGU logo here
-                            </div>
-                            
-                            <div style="flex-grow: 1; margin-left: 2rem;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                    <div style="font-weight: bold;">LDRRMO</div>
-                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                    <div style="font-weight: bold;">PUNONG BARANGAY</div>
-                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                    <div style="font-weight: bold;">PUROK LEADER</div>
-                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                    <div style="font-weight: bold;">LOCAL POLICE STATION</div>
-                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                    <div style="font-weight: bold;">OFFICE OF CIVIL DEFENSE NIR:</div>
-                                    <div style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 200px;">
-                                        09956112342 / 09177040134
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Authority Section -->
+                <div class="authority-section" style="display: flex; justify-content: space-between; margin-top: 2rem; padding: 1.5rem; background: #f4a460; border: 2px solid #000;">
+                    <div class="logo-placeholder" style="width: 120px; height: 120px; border: 2px dashed #8b4513; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #deb887; font-size: 0.8rem; color: #8b4513; text-align: center; flex-shrink: 0;">
+                        Place LGU logo here
+                    </div>
+                    
+                    <div class="authority-list" style="flex-grow: 1; margin-left: 2rem;">
+                        <div class="authority-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div class="authority-name" style="font-weight: bold; text-transform: uppercase;">LDRRMO</div>
+                            <div class="authority-line" style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
                         </div>
-
-                        <!-- Footer -->
-                        <div style="text-align: center; margin-top: 1rem; font-weight: bold;">
-                            <div>REGIONAL TASK FORCE KANLAON</div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem;">
-                                <div style="width: 60px; height: 60px; border: 2px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; font-size: 0.6rem; text-align: center;">
-                                    TASK FORCE KANLAON<br>
-                                    MOUNT KANLAON<br>
-                                    EMERGENCY RESPONSE
-                                </div>
+                        <div class="authority-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div class="authority-name" style="font-weight: bold; text-transform: uppercase;">PUNONG BARANGAY</div>
+                            <div class="authority-line" style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
+                        </div>
+                        <div class="authority-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div class="authority-name" style="font-weight: bold; text-transform: uppercase;">PUROK LEADER</div>
+                            <div class="authority-line" style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
+                        </div>
+                        <div class="authority-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div class="authority-name" style="font-weight: bold; text-transform: uppercase;">LOCAL POLICE STATION</div>
+                            <div class="authority-line" style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;"></div>
+                        </div>
+                        <div class="authority-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div class="authority-name" style="font-weight: bold; text-transform: uppercase;">OFFICE OF CIVIL DEFENSE NIR</div>
+                            <div class="authority-line" style="border-bottom: 1px solid #000; flex-grow: 1; margin-left: 1rem; min-width: 150px;">
+                                <span class="authority-phone" style="font-size: 0.8rem; color: #666;">09956112342 / 09177040134</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card Information -->
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="card-title mb-0">
-                                    <i class="fas fa-info-circle"></i> Card Information
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td><strong>Card Number:</strong></td>
-                                        <td><?= htmlspecialchars($idCard['card_number']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Control Number:</strong></td>
-                                        <td><?= htmlspecialchars($idCard['control_number']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Issue Date:</strong></td>
-                                        <td><?= date('F d, Y', strtotime($idCard['issue_date'])) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Expiry Date:</strong></td>
-                                        <td><?= date('F d, Y', strtotime($idCard['expiry_date'])) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Status:</strong></td>
-                                        <td>
-                                            <span class="badge bg-<?= $idCard['status'] === 'active' ? 'success' : 'danger' ?>">
-                                                <?= ucfirst($idCard['status']) ?>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Generated By:</strong></td>
-                                        <td><?= htmlspecialchars($idCard['generated_by_name']) ?></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="card-title mb-0">
-                                    <i class="fas fa-user"></i> Resident Information
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td><strong>Name:</strong></td>
-                                        <td><?= htmlspecialchars($idCard['first_name'] . ' ' . $idCard['last_name']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Date of Birth:</strong></td>
-                                        <td><?= date('F d, Y', strtotime($idCard['date_of_birth'])) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Gender:</strong></td>
-                                        <td><?= ucfirst($idCard['gender']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Civil Status:</strong></td>
-                                        <td><?= ucfirst($idCard['civil_status']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Contact Number:</strong></td>
-                                        <td><?= htmlspecialchars($idCard['contact_number'] ?? 'Not provided') ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Address:</strong></td>
-                                        <td><?= htmlspecialchars($idCard['address']) ?></td>
-                                    </tr>
-                                </table>
-                            </div>
+                <!-- Footer -->
+                <div class="footer" style="text-align: center; margin-top: 1rem; font-weight: bold; text-transform: uppercase;">
+                    <div>REGIONAL TASK FORCE KANLAON</div>
+                    <div class="footer-logo" style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem;">
+                        <div class="volcano-logo" style="width: 60px; height: 60px; border: 2px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #ff8c00; font-size: 0.6rem; text-align: center; position: relative;">
+                            <span style="position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-size: 0.5rem; font-weight: bold;">🌋</span>
+                            <span style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 0.4rem; text-align: center; line-height: 1; white-space: pre-line;">TASK FORCE<br>KANLAON</span>
                         </div>
                     </div>
                 </div>
@@ -300,9 +213,26 @@ ob_start();
     </div>
 </div>
 
-<script>
-// Add any JavaScript functionality here if needed
-</script>
+<style>
+@media print {
+    .print-header, .btn-group, .container-fluid > .row > .col-12 > .d-flex {
+        display: none !important;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
+    }
+    
+    .id-card {
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 1rem !important;
+    }
+}
+</style>
 
 <?php
 $content = ob_get_clean();

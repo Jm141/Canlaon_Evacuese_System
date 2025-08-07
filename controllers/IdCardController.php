@@ -5,9 +5,14 @@ class IdCardController extends Controller {
     public function index() {
         $this->requireAdmin();
         
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         $page = $_GET['page'] ?? 1;
         $search = $_GET['search'] ?? '';
+        
+        // For main admin, allow filtering by specific barangay
+        if (isMainAdmin() && !empty($_GET['barangay_id'])) {
+            $barangayId = $_GET['barangay_id'];
+        }
         
         $idCardModel = new IdCard();
         $filters = ['search' => $search];
@@ -17,9 +22,12 @@ class IdCardController extends Controller {
         
         $pagination = $this->getPaginationData($page, $totalCards);
         
-        // Get barangays for filter
-        $barangayModel = new Barangay();
-        $barangays = $barangayModel->getAllBarangays();
+        // Get barangays for filter (only for main admin)
+        $barangays = [];
+        if (isMainAdmin()) {
+            $barangayModel = new Barangay();
+            $barangays = $barangayModel->getAllBarangays();
+        }
         
         // Build query string for pagination
         $queryParams = [];
@@ -70,7 +78,7 @@ class IdCardController extends Controller {
         }
         
         // Get residents without ID cards
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         $residents = $residentModel->getResidentsByBarangay($barangayId, 1, 100);
         
         // Filter out residents who already have active ID cards
@@ -156,7 +164,7 @@ class IdCardController extends Controller {
         $this->requireAdmin();
         
         $idCardModel = new IdCard();
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         
         // Get all active ID cards for the barangay
         $idCards = $idCardModel->getActiveIdCardsByBarangay($barangayId);
@@ -229,7 +237,7 @@ class IdCardController extends Controller {
         $this->requireAdmin();
         
         $searchTerm = $_GET['q'] ?? '';
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         
         $idCardModel = new IdCard();
         $results = $idCardModel->searchIdCards($searchTerm, $barangayId, 10);

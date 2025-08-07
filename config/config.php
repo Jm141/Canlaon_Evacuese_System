@@ -6,9 +6,9 @@
 
 // Database Configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'resident_management');
-define('DB_USER', 'root');
-define('DB_PASS', '1412');
+define('DB_NAME', 'u651277261_evac');
+define('DB_USER', 'u651277261_evac');
+define('DB_PASS', 's5CdWGsG?5M');
 
 // Application Configuration
 define('APP_NAME', 'Resident Management System');
@@ -67,6 +67,9 @@ spl_autoload_register(function ($class) {
         }
     }
 });
+
+// Explicitly require Database class to ensure it's loaded
+require_once APP_ROOT . '/config/database.php';
 
 // Helper functions
 function redirect($url) {

@@ -1,4 +1,8 @@
-<?php require_once 'views/layouts/main.php'; ?>
+<?php
+// Start output buffering to capture content
+ob_start();
+require_once 'views/layouts/main.php';
+?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">User Management</h2>
@@ -113,7 +117,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <?= $userItem['barangay_name'] ? htmlspecialchars($userItem['barangay_name']) : '<span class="text-muted">All</span>' ?>
+                                    <?= ($userItem['barangay_name'] ?? null) ? htmlspecialchars($userItem['barangay_name']) : '<span class="text-muted">All</span>' ?>
                                 </td>
                                 <td>
                                     <?php if ($userItem['is_active']): ?>
@@ -123,7 +127,7 @@
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if ($userItem['last_login']): ?>
+                                    <?php if ($userItem['last_login'] ?? null): ?>
                                         <?= date('M j, Y g:i A', strtotime($userItem['last_login'])) ?>
                                     <?php else: ?>
                                         <span class="text-muted">Never</span>

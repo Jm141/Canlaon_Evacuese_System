@@ -106,16 +106,22 @@ class IdCard extends Model {
                 INNER JOIN residents r ON ic.resident_id = r.id
                 INNER JOIN households h ON r.household_id = h.id
                 INNER JOIN barangays b ON h.barangay_id = b.id
-                LEFT JOIN users u ON ic.generated_by = u.id
-                WHERE h.barangay_id = :barangay_id
-                ORDER BY ic.created_at DESC
+                LEFT JOIN users u ON ic.generated_by = u.id";
+        
+        $params = [];
+        
+        if ($barangayId !== null) {
+            $sql .= " WHERE h.barangay_id = :barangay_id";
+            $params['barangay_id'] = $barangayId;
+        }
+        
+        $sql .= " ORDER BY ic.created_at DESC
                 LIMIT :limit OFFSET :offset";
         
-        return $this->query($sql, [
-            'barangay_id' => $barangayId,
-            'limit' => $limit,
-            'offset' => $offset
-        ]);
+        $params['limit'] = $limit;
+        $params['offset'] = $offset;
+        
+        return $this->query($sql, $params);
     }
     
     /**
@@ -124,8 +130,8 @@ class IdCard extends Model {
     public function getActiveIdCardsByBarangay($barangayId) {
         $sql = "SELECT ic.*, r.first_name, r.last_name, r.middle_name, r.date_of_birth, 
                        r.gender, r.civil_status, r.contact_number, r.emergency_contact_name, 
-                       r.emergency_contact_number, r.address, r.assigned_evacuation_center, 
-                       r.collection_point, r.evacuation_vehicle, r.vehicle_driver,
+                       r.emergency_contact_number, h.address, h.assigned_evacuation_center, 
+                       h.collection_point, h.evacuation_vehicle, h.vehicle_driver,
                        h.household_head, h.control_number, b.name as barangay_name,
                        u.full_name as generated_by_name,
                        (SELECT COUNT(*) FROM residents r2 WHERE r2.household_id = h.id AND r2.is_active = 1) as household_member_count
@@ -134,11 +140,18 @@ class IdCard extends Model {
                 INNER JOIN households h ON r.household_id = h.id
                 INNER JOIN barangays b ON h.barangay_id = b.id
                 LEFT JOIN users u ON ic.generated_by = u.id
-                WHERE h.barangay_id = :barangay_id 
-                AND ic.status = 'active'
-                ORDER BY r.last_name, r.first_name";
+                WHERE ic.status = 'active'";
         
-        return $this->query($sql, ['barangay_id' => $barangayId]);
+        $params = [];
+        
+        if ($barangayId !== null) {
+            $sql .= " AND h.barangay_id = :barangay_id";
+            $params['barangay_id'] = $barangayId;
+        }
+        
+        $sql .= " ORDER BY r.last_name, r.first_name";
+        
+        return $this->query($sql, $params);
     }
 
     /**
@@ -148,11 +161,17 @@ class IdCard extends Model {
         $sql = "SELECT COUNT(*) as count
                 FROM id_cards ic
                 INNER JOIN residents r ON ic.resident_id = r.id
-                INNER JOIN households h ON r.household_id = h.id
-                WHERE h.barangay_id = :barangay_id";
+                INNER JOIN households h ON r.household_id = h.id";
         
-        $result = $this->queryFirst($sql, ['barangay_id' => $barangayId]);
-        return $result['count'];
+        $params = [];
+        
+        if ($barangayId !== null) {
+            $sql .= " WHERE h.barangay_id = :barangay_id";
+            $params['barangay_id'] = $barangayId;
+        }
+        
+        $result = $this->queryFirst($sql, $params);
+        return $result['count'] ?? 0;
     }
 
     /**
@@ -175,7 +194,7 @@ class IdCard extends Model {
         
         $params = ['search' => "%{$searchTerm}%"];
         
-        if ($barangayId) {
+        if ($barangayId !== null) {
             $sql .= " AND h.barangay_id = :barangay_id";
             $params['barangay_id'] = $barangayId;
         }

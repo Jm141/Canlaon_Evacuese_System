@@ -73,7 +73,7 @@ ob_start();
                 </h6>
             </div>
             <div class="card-body">
-                <?php if ($user['barangay_name']): ?>
+                <?php if ($user['barangay_name'] ?? null): ?>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Assigned Barangay</label>
                         <p class="form-control-plaintext">

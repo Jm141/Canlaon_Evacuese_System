@@ -1,4 +1,6 @@
-<?php require_once 'views/layouts/main.php'; ?>
+<?php
+// Reports page content
+?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Reports & Analytics</h2>
@@ -39,6 +41,19 @@
                     <option value="demographics" <?= $reportType === 'demographics' ? 'selected' : '' ?>>Demographics Report</option>
                 </select>
             </div>
+            <?php if (isMainAdmin() && !empty($barangays)): ?>
+            <div class="col-md-2">
+                <label for="barangay_id" class="form-label">Barangay</label>
+                <select class="form-select" id="barangay_id" name="barangay_id">
+                    <option value="">All Barangays</option>
+                    <?php foreach ($barangays as $barangay): ?>
+                        <option value="<?= $barangay['id'] ?>" <?= ($_GET['barangay_id'] ?? '') == $barangay['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($barangay['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <?php endif; ?>
             <div class="col-md-2">
                 <label for="date_from" class="form-label">Date From</label>
                 <input type="date" class="form-control" id="date_from" name="date_from" value="<?= $dateFrom ?>">
@@ -53,7 +68,7 @@
                     <i class="fas fa-search"></i> Generate
                 </button>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <label class="form-label">&nbsp;</label>
                 <a href="reports.php" class="btn btn-secondary w-100">
                     <i class="fas fa-times"></i> Reset

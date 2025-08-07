@@ -1,4 +1,8 @@
-<?php require_once 'views/layouts/main.php'; ?>
+<?php
+// Start output buffering to capture content
+ob_start();
+require_once 'views/layouts/main.php';
+?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Household Details</h2>
@@ -145,7 +149,7 @@
                                         <span class="badge bg-success ms-1">Head</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= $member['age'] ?></td>
+                                <td><?= $member['age'] ? $member['age'] : '<span class="text-muted">-</span>' ?></td>
                                 <td><?= ucfirst($member['gender']) ?></td>
                                 <td><?= ucfirst($member['civil_status']) ?></td>
                                 <td>

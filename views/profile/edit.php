@@ -1,4 +1,8 @@
-<?php require_once 'views/layouts/main.php'; ?>
+<?php
+// Start output buffering to capture content
+ob_start();
+require_once 'views/layouts/main.php';
+?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Edit Profile</h2>
@@ -49,7 +53,7 @@
                     <div class="mb-3">
                         <label for="barangay" class="form-label">Assigned Barangay</label>
                         <input type="text" class="form-control" id="barangay" 
-                               value="<?= $profileData['barangay_name'] ? htmlspecialchars($profileData['barangay_name']) : 'All Barangays' ?>" readonly>
+                               value="<?= ($profileData['barangay_name'] ?? null) ? htmlspecialchars($profileData['barangay_name']) : 'All Barangays' ?>" readonly>
                         <small class="form-text text-muted">Barangay assignment cannot be changed</small>
                     </div>
                     

@@ -5,11 +5,16 @@ class ReportController extends Controller {
     public function index() {
         $this->requirePermission('reports');
         
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         $reportType = $_GET['type'] ?? 'overview';
         $dateFrom = $_GET['date_from'] ?? date('Y-m-01'); // First day of current month
         $dateTo = $_GET['date_to'] ?? date('Y-m-d'); // Today
         $format = $_GET['format'] ?? 'html';
+        
+        // For main admin, allow filtering by specific barangay
+        if (isMainAdmin() && !empty($_GET['barangay_id'])) {
+            $barangayId = $_GET['barangay_id'];
+        }
         
         $residentModel = new Resident();
         $householdModel = new Household();
@@ -49,6 +54,13 @@ class ReportController extends Controller {
         } elseif ($format === 'excel') {
             $this->generateExcelReport($reportType, $data, $dateFrom, $dateTo);
         } else {
+            // Get barangays for filter (only for main admin)
+            $barangays = [];
+            if (isMainAdmin()) {
+                $barangayModel = new Barangay();
+                $barangays = $barangayModel->getAllBarangays();
+            }
+            
             $this->render('reports/index', [
                 'pageTitle' => 'Reports',
                 'currentPage' => 'reports',
@@ -56,7 +68,8 @@ class ReportController extends Controller {
                 'reportType' => $reportType,
                 'dateFrom' => $dateFrom,
                 'dateTo' => $dateTo,
-                'data' => $data
+                'data' => $data,
+                'barangays' => $barangays
             ]);
         }
     }
@@ -68,7 +81,7 @@ class ReportController extends Controller {
         
         return [
             'total_residents' => $residentModel->countResidentsByBarangay($barangayId),
-            'total_households' => $householdModel->countHouseholds(['barangay_id' => $barangayId]),
+            'total_households' => $householdModel->countHouseholdsByBarangay($barangayId),
             'active_id_cards' => $idCardModel->countActiveCardsByBarangay($barangayId),
             'special_needs' => $residentModel->countResidentsWithSpecialNeeds($barangayId),
             'recent_additions' => [
@@ -175,13 +188,13 @@ class ReportController extends Controller {
     public function export() {
         $this->requirePermission('reports');
         
-        $reportType = $_GET['type'] ?? 'residents';
+        $type = $_GET['type'] ?? 'residents';
         $format = $_GET['format'] ?? 'csv';
-        $barangayId = $this->getUserBarangayId();
         $dateFrom = $_GET['date_from'] ?? date('Y-m-01');
         $dateTo = $_GET['date_to'] ?? date('Y-m-d');
+        $barangayId = $this->getBarangayFilter();
         
-        switch ($reportType) {
+        switch ($type) {
             case 'residents':
                 $this->exportResidents($barangayId, $format, $dateFrom, $dateTo);
                 break;
@@ -195,8 +208,7 @@ class ReportController extends Controller {
                 $this->exportSpecialNeeds($barangayId, $format);
                 break;
             default:
-                $this->setFlashMessage('error', 'Invalid report type.');
-                redirect('reports.php');
+                $this->exportResidents($barangayId, $format, $dateFrom, $dateTo);
                 break;
         }
     }

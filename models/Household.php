@@ -34,6 +34,15 @@ class Household extends Model {
     }
 
     /**
+     * Count households by barangay
+     */
+    public function countHouseholdsByBarangay($barangayId) {
+        $sql = "SELECT COUNT(*) as count FROM households WHERE barangay_id = :barangay_id";
+        $result = $this->queryFirst($sql, ['barangay_id' => $barangayId]);
+        return $result['count'] ?? 0;
+    }
+
+    /**
      * Get household statistics for barangay
      */
     public function getBarangayStatistics($barangayId) {
@@ -75,13 +84,20 @@ class Household extends Model {
     public function getEvacuationCentersByBarangay($barangayId) {
         $sql = "SELECT DISTINCT assigned_evacuation_center, COUNT(*) as household_count
                 FROM households 
-                WHERE barangay_id = :barangay_id 
-                AND assigned_evacuation_center IS NOT NULL 
-                AND assigned_evacuation_center != ''
-                GROUP BY assigned_evacuation_center
+                WHERE assigned_evacuation_center IS NOT NULL 
+                AND assigned_evacuation_center != ''";
+        
+        $params = [];
+        
+        if ($barangayId !== null) {
+            $sql .= " AND barangay_id = :barangay_id";
+            $params['barangay_id'] = $barangayId;
+        }
+        
+        $sql .= " GROUP BY assigned_evacuation_center
                 ORDER BY household_count DESC";
         
-        return $this->query($sql, ['barangay_id' => $barangayId]);
+        return $this->query($sql, $params);
     }
 
     /**
@@ -155,8 +171,8 @@ class Household extends Model {
         }
         
         $sql = "SELECT COUNT(*) as count FROM households {$whereClause}";
-        $result = $this->queryFirst($sql, $params);
         
+        $result = $this->queryFirst($sql, $params);
         return $result['count'] ?? 0;
     }
 
@@ -361,14 +377,14 @@ class Household extends Model {
                 LEFT JOIN barangays b ON h.barangay_id = b.id
                 WHERE (h.household_head LIKE :search OR h.address LIKE :search OR h.control_number LIKE :search)";
         
-        $params = ['search' => "%{$searchTerm}%"];
+        $params = ['search' => '%' . $searchTerm . '%'];
         
-        if ($barangayId) {
+        if ($barangayId !== null) {
             $sql .= " AND h.barangay_id = :barangay_id";
             $params['barangay_id'] = $barangayId;
         }
         
-        $sql .= " ORDER BY h.household_head LIMIT :limit";
+        $sql .= " ORDER BY h.household_head ASC LIMIT :limit";
         $params['limit'] = $limit;
         
         return $this->query($sql, $params);

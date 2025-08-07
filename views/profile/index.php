@@ -1,4 +1,8 @@
-<?php require_once 'views/layouts/main.php'; ?>
+<?php
+// Start output buffering to capture content
+ob_start();
+require_once 'views/layouts/main.php';
+?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">My Profile</h2>
@@ -54,7 +58,7 @@
                 <div class="row mb-3">
                     <div class="col-sm-4"><strong>Barangay:</strong></div>
                     <div class="col-sm-8">
-                        <?= $profileData['barangay_name'] ? htmlspecialchars($profileData['barangay_name']) : '<span class="text-muted">All Barangays</span>' ?>
+                        <?= ($profileData['barangay_name'] ?? null) ? htmlspecialchars($profileData['barangay_name']) : '<span class="text-muted">All Barangays</span>' ?>
                     </div>
                 </div>
                 

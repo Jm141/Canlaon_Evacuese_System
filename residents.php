@@ -1,5 +1,6 @@
 <?php
 require_once 'config/config.php';
+require_once 'Controller.php';
 require_once 'controllers/ResidentController.php';
 
 // Handle AJAX requests

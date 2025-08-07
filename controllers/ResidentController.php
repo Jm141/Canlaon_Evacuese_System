@@ -5,15 +5,21 @@ class ResidentController extends Controller {
     public function index() {
         $this->requirePermission('resident_management');
         
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         $page = $_GET['page'] ?? 1;
         $search = $_GET['search'] ?? '';
         $gender = $_GET['gender'] ?? '';
         $ageMin = $_GET['age_min'] ?? '';
         $ageMax = $_GET['age_max'] ?? '';
         
+        // For main admin, allow filtering by specific barangay
+        if (isMainAdmin() && !empty($_GET['barangay_id'])) {
+            $barangayId = $_GET['barangay_id'];
+        }
+        
         $residentModel = new Resident();
         $filters = [
+            'barangay_id' => $barangayId,
             'search' => $search,
             'gender' => $gender,
             'age_min' => $ageMin,
@@ -25,14 +31,21 @@ class ResidentController extends Controller {
         
         $pagination = $this->getPaginationData($page, $totalResidents);
         
+        // Get barangays for filter (only for main admin)
+        $barangays = [];
+        if (isMainAdmin()) {
+            $barangayModel = new Barangay();
+            $barangays = $barangayModel->getAllBarangays();
+        }
+        
         $this->render('residents/index', [
             'pageTitle' => 'Residents',
             'currentPage' => 'residents',
             'user' => $this->user,
             'residents' => $residents,
-            'totalResidents' => $totalResidents,
             'pagination' => $pagination,
-            'filters' => $filters
+            'filters' => $filters,
+            'barangays' => $barangays
         ]);
     }
     
@@ -199,7 +212,7 @@ class ResidentController extends Controller {
         $this->requirePermission('resident_management');
         
         $searchTerm = $_GET['q'] ?? '';
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         
         $residentModel = new Resident();
         $results = $residentModel->searchResidents($searchTerm, $barangayId, 10);

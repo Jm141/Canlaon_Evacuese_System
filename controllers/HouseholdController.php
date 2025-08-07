@@ -5,10 +5,15 @@ class HouseholdController extends Controller {
     public function index() {
         $this->requirePermission('resident_management');
         
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         $page = $_GET['page'] ?? 1;
         $search = $_GET['search'] ?? '';
         $evacuationCenter = $_GET['evacuation_center'] ?? '';
+        
+        // For main admin, allow filtering by specific barangay
+        if (isMainAdmin() && !empty($_GET['barangay_id'])) {
+            $barangayId = $_GET['barangay_id'];
+        }
         
         $householdModel = new Household();
         $filters = [
@@ -25,6 +30,13 @@ class HouseholdController extends Controller {
         // Get evacuation centers for filter
         $evacuationCenters = $householdModel->getEvacuationCentersByBarangay($barangayId);
         
+        // Get barangays for filter (only for main admin)
+        $barangays = [];
+        if (isMainAdmin()) {
+            $barangayModel = new Barangay();
+            $barangays = $barangayModel->getAllBarangays();
+        }
+        
         $this->render('households/index', [
             'pageTitle' => 'Households',
             'currentPage' => 'households',
@@ -32,7 +44,8 @@ class HouseholdController extends Controller {
             'households' => $households,
             'pagination' => $pagination,
             'filters' => $filters,
-            'evacuationCenters' => $evacuationCenters
+            'evacuationCenters' => $evacuationCenters,
+            'barangays' => $barangays
         ]);
     }
     
@@ -142,16 +155,16 @@ class HouseholdController extends Controller {
         }
         
         $householdModel = new Household();
-        $household = $householdModel->getHouseholdWithDetails($householdId);
+        $household = $householdModel->getHouseholdWithResidents($householdId);
         
         if (!$household) {
             $this->setFlashMessage('error', 'Household not found.');
             redirect('households.php');
         }
         
-        // Get household members
+        // Get household members (already included in $household['residents'], but keeping for compatibility)
         $residentModel = new Resident();
-        $householdMembers = $residentModel->getHouseholdMembers($householdId);
+        $householdMembers = $household['residents'] ?? $residentModel->getHouseholdMembers($householdId);
         
         // Get ID cards for household members
         $idCardModel = new IdCard();
@@ -192,7 +205,7 @@ class HouseholdController extends Controller {
         $this->requirePermission('resident_management');
         
         $searchTerm = $_GET['q'] ?? '';
-        $barangayId = $this->getUserBarangayId();
+        $barangayId = $this->getBarangayFilter();
         
         $householdModel = new Household();
         $results = $householdModel->searchHouseholds($searchTerm, $barangayId, 10);

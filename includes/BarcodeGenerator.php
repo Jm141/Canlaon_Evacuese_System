@@ -14,9 +14,9 @@ class BarcodeGenerator {
     public function __construct($width = 300, $height = 100) {
         $this->width = $width;
         $this->height = $height;
-        $this->fontSize = 3;
-        $this->barWidth = 2;
-        $this->barHeight = 60;
+        $this->fontSize = 2; // Smaller font for better fit
+        $this->barWidth = 3; // Thicker bars for better visibility
+        $this->barHeight = 50; // Taller bars
     }
     
     /**
@@ -87,8 +87,8 @@ class BarcodeGenerator {
         $barcode = $this->generateCode128($data);
         
         // Calculate image dimensions
-        $imageWidth = strlen($barcode) * $this->barWidth + 20;
-        $imageHeight = $this->height;
+        $imageWidth = (int)(strlen($barcode) * $this->barWidth + 60);
+        $imageHeight = (int)$this->height;
         
         // Create image
         $image = imagecreate($imageWidth, $imageHeight);
@@ -101,7 +101,7 @@ class BarcodeGenerator {
         imagefill($image, 0, 0, $white);
         
         // Draw barcode
-        $x = 10;
+        $x = 30;
         for ($i = 0; $i < strlen($barcode); $i++) {
             if ($barcode[$i] == '1') {
                 imagefilledrectangle($image, $x, 10, $x + $this->barWidth - 1, 10 + $this->barHeight, $black);
@@ -111,8 +111,8 @@ class BarcodeGenerator {
         
         // Add text below barcode
         $textWidth = strlen($data) * imagefontwidth($this->fontSize);
-        $textX = ($imageWidth - $textWidth) / 2;
-        $textY = $imageHeight - 20;
+        $textX = (int)(($imageWidth - $textWidth) / 2);
+        $textY = (int)($imageHeight - 20);
         imagestring($image, $this->fontSize, $textX, $textY, $data, $black);
         
         // Output image
@@ -133,7 +133,7 @@ class BarcodeGenerator {
         // In production, you should use a proper QR library like phpqrcode
         
         $size = 200;
-        $image = imagecreate($size, $size);
+        $image = imagecreate((int)$size, (int)$size);
         
         // Define colors
         $white = imagecolorallocate($image, 255, 255, 255);

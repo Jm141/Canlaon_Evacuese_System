@@ -1,4 +1,8 @@
-<?php require_once 'views/layouts/main.php'; ?>
+<?php
+// Start output buffering to capture content
+ob_start();
+require_once 'views/layouts/main.php';
+?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Households</h2>
@@ -11,12 +15,25 @@
 <div class="card mb-4">
     <div class="card-body">
         <form method="GET" action="households.php" class="row g-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="search" class="form-label">Search</label>
                 <input type="text" class="form-control" id="search" name="search" 
                        value="<?= htmlspecialchars($filters['search']) ?>" 
                        placeholder="Search by household head, address, or control number">
             </div>
+            <?php if (isMainAdmin() && !empty($barangays)): ?>
+            <div class="col-md-2">
+                <label for="barangay_id" class="form-label">Barangay</label>
+                <select class="form-select" id="barangay_id" name="barangay_id">
+                    <option value="">All Barangays</option>
+                    <?php foreach ($barangays as $barangay): ?>
+                        <option value="<?= $barangay['id'] ?>" <?= ($_GET['barangay_id'] ?? '') == $barangay['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($barangay['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <?php endif; ?>
             <div class="col-md-3">
                 <label for="evacuation_center" class="form-label">Evacuation Center</label>
                 <select class="form-select" id="evacuation_center" name="evacuation_center">

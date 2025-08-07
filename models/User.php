@@ -167,83 +167,82 @@ class User extends Model {
     public function getUsersWithPagination($page = 1, $limit = ITEMS_PER_PAGE, $filters = []) {
         $offset = ($page - 1) * $limit;
         
-        $whereConditions = ['is_active' => 1];
+        $whereConditions = ['u.is_active' => 1];
         $params = [];
         
         if (!empty($filters['role'])) {
-            $whereConditions['role'] = $filters['role'];
+            $whereConditions['u.role'] = $filters['role'];
         }
         
         if (!empty($filters['barangay_id'])) {
-            $whereConditions['barangay_id'] = $filters['barangay_id'];
+            $whereConditions['u.barangay_id'] = $filters['barangay_id'];
         }
+        
+        // Always use JOIN to get barangay_name and last_login
+        $sql = "SELECT u.*, b.name as barangay_name 
+                FROM users u 
+                LEFT JOIN barangays b ON u.barangay_id = b.id 
+                WHERE u.is_active = 1";
         
         if (!empty($filters['search'])) {
-            $search = $filters['search'];
-            $sql = "SELECT u.*, b.name as barangay_name 
-                    FROM users u 
-                    LEFT JOIN barangays b ON u.barangay_id = b.id 
-                    WHERE u.is_active = 1 
-                    AND (u.username LIKE :search OR u.full_name LIKE :search OR u.email LIKE :search)";
-            
-            if (!empty($filters['role'])) {
-                $sql .= " AND u.role = :role";
-                $params['role'] = $filters['role'];
-            }
-            
-            if (!empty($filters['barangay_id'])) {
-                $sql .= " AND u.barangay_id = :barangay_id";
-                $params['barangay_id'] = $filters['barangay_id'];
-            }
-            
-            $sql .= " LIMIT :limit OFFSET :offset";
-            $params['search'] = "%{$search}%";
-            $params['limit'] = $limit;
-            $params['offset'] = $offset;
-            
-            return $this->query($sql, $params);
+            $sql .= " AND (u.username LIKE :search OR u.full_name LIKE :search OR u.email LIKE :search)";
+            $params['search'] = "%{$filters['search']}%";
         }
         
-        return $this->where($whereConditions, $limit, $offset);
+        if (!empty($filters['role'])) {
+            $sql .= " AND u.role = :role";
+            $params['role'] = $filters['role'];
+        }
+        
+        if (!empty($filters['barangay_id'])) {
+            $sql .= " AND u.barangay_id = :barangay_id";
+            $params['barangay_id'] = $filters['barangay_id'];
+        }
+        
+        if (!empty($filters['status'])) {
+            $sql .= " AND u.is_active = :status";
+            $params['status'] = $filters['status'];
+        }
+        
+        $sql .= " ORDER BY u.full_name ASC LIMIT :limit OFFSET :offset";
+        $params['limit'] = $limit;
+        $params['offset'] = $offset;
+        
+        return $this->query($sql, $params);
     }
 
     /**
      * Count users with filters
      */
     public function countUsers($filters = []) {
-        $whereConditions = ['is_active' => 1];
+        $params = [];
+        
+        $sql = "SELECT COUNT(*) as count FROM users u 
+                LEFT JOIN barangays b ON u.barangay_id = b.id 
+                WHERE u.is_active = 1";
+        
+        if (!empty($filters['search'])) {
+            $sql .= " AND (u.username LIKE :search OR u.full_name LIKE :search OR u.email LIKE :search)";
+            $params['search'] = "%{$filters['search']}%";
+        }
         
         if (!empty($filters['role'])) {
-            $whereConditions['role'] = $filters['role'];
+            $sql .= " AND u.role = :role";
+            $params['role'] = $filters['role'];
         }
         
         if (!empty($filters['barangay_id'])) {
-            $whereConditions['barangay_id'] = $filters['barangay_id'];
+            $sql .= " AND u.barangay_id = :barangay_id";
+            $params['barangay_id'] = $filters['barangay_id'];
         }
         
-        if (!empty($filters['search'])) {
-            $search = $filters['search'];
-            $sql = "SELECT COUNT(*) as count FROM users u 
-                    WHERE u.is_active = 1 
-                    AND (u.username LIKE :search OR u.full_name LIKE :search OR u.email LIKE :search)";
-            
-            $params = ['search' => "%{$search}%"];
-            
-            if (!empty($filters['role'])) {
-                $sql .= " AND u.role = :role";
-                $params['role'] = $filters['role'];
-            }
-            
-            if (!empty($filters['barangay_id'])) {
-                $sql .= " AND u.barangay_id = :barangay_id";
-                $params['barangay_id'] = $filters['barangay_id'];
-            }
-            
-            $result = $this->queryFirst($sql, $params);
-            return $result['count'];
+        if (!empty($filters['status'])) {
+            $sql .= " AND u.is_active = :status";
+            $params['status'] = $filters['status'];
         }
         
-        return $this->count($whereConditions);
+        $result = $this->queryFirst($sql, $params);
+        return $result['count'] ?? 0;
     }
 
     /**

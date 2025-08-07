@@ -41,9 +41,15 @@ class Resident extends Model {
                 FROM residents r
                 INNER JOIN households h ON r.household_id = h.id
                 INNER JOIN barangays b ON h.barangay_id = b.id
-                WHERE h.barangay_id = :barangay_id AND r.is_active = 1";
+                WHERE r.is_active = 1";
         
-        $params = ['barangay_id' => $barangayId];
+        $params = [];
+        
+        // Add barangay filter only if specified (main admin can see all)
+        if ($barangayId !== null) {
+            $sql .= " AND h.barangay_id = :barangay_id";
+            $params['barangay_id'] = $barangayId;
+        }
         
         // Add search filter
         if (!empty($filters['search'])) {
@@ -85,9 +91,15 @@ class Resident extends Model {
         $sql = "SELECT COUNT(*) as count
                 FROM residents r
                 INNER JOIN households h ON r.household_id = h.id
-                WHERE h.barangay_id = :barangay_id AND r.is_active = 1";
+                WHERE r.is_active = 1";
         
-        $params = ['barangay_id' => $barangayId];
+        $params = [];
+        
+        // Add barangay filter only if specified (main admin can see all)
+        if ($barangayId !== null) {
+            $sql .= " AND h.barangay_id = :barangay_id";
+            $params['barangay_id'] = $barangayId;
+        }
         
         // Add search filter
         if (!empty($filters['search'])) {
@@ -116,17 +128,19 @@ class Resident extends Model {
         }
         
         $result = $this->queryFirst($sql, $params);
-        return $result['count'];
+        return $result['count'] ?? 0;
     }
 
     /**
      * Get household members
      */
     public function getHouseholdMembers($householdId) {
-        return $this->where([
-            'household_id' => $householdId,
-            'is_active' => 1
-        ]);
+        $sql = "SELECT r.*, TIMESTAMPDIFF(YEAR, r.date_of_birth, CURDATE()) as age
+                FROM residents r
+                WHERE r.household_id = :household_id AND r.is_active = 1
+                ORDER BY r.last_name, r.first_name";
+        
+        return $this->query($sql, ['household_id' => $householdId]);
     }
     
     /**
@@ -145,7 +159,12 @@ class Resident extends Model {
      * Get residents by household (alias for getHouseholdMembers)
      */
     public function getResidentsByHousehold($householdId) {
-        return $this->getHouseholdMembers($householdId);
+        $sql = "SELECT r.*, TIMESTAMPDIFF(YEAR, r.date_of_birth, CURDATE()) as age
+                FROM residents r
+                WHERE r.household_id = :household_id AND r.is_active = 1
+                ORDER BY r.last_name, r.first_name";
+        
+        return $this->query($sql, ['household_id' => $householdId]);
     }
 
     /**
@@ -225,7 +244,7 @@ class Resident extends Model {
         
         $params = ['search' => "%{$searchTerm}%"];
         
-        if ($barangayId) {
+        if ($barangayId !== null) {
             $sql .= " AND h.barangay_id = :barangay_id";
             $params['barangay_id'] = $barangayId;
         }

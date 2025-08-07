@@ -40,70 +40,85 @@
             line-height: 1.6;
         }
 
+        /* Prevent body scroll when mobile sidebar is open */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
         /* Sidebar */
         .sidebar {
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
             min-height: 100vh;
-            width: 280px;
+            width: 70px; /* Start collapsed by default */
             position: fixed;
             left: 0;
             top: 0;
             z-index: 1000;
             transition: all 0.3s ease;
             box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
         
-        .sidebar.collapsed {
-            width: 70px;
+        .sidebar.expanded {
+            width: 280px;
         }
         
-        .sidebar.collapsed .sidebar-header h3,
-        .sidebar.collapsed .sidebar-header p,
-        .sidebar.collapsed .nav-link span {
-            display: none;
+        .sidebar.expanded .sidebar-header h3,
+        .sidebar.expanded .sidebar-header p,
+        .sidebar.expanded .nav-link span {
+            display: block;
         }
         
-        .sidebar.collapsed .nav-link {
+        .sidebar .sidebar-header h3,
+        .sidebar .sidebar-header p,
+        .sidebar .nav-link span {
+            display: none; /* Hide by default */
+        }
+        
+        .sidebar .nav-link {
             justify-content: center;
             padding: 0.875rem;
+            white-space: nowrap;
         }
         
-        .sidebar.collapsed .nav-link i {
+        .sidebar .nav-link i {
             margin-right: 0;
             font-size: 1.25rem;
         }
         
-        .sidebar.collapsed .nav-link:hover {
+        .sidebar .nav-link:hover {
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
         }
         
-        .sidebar.collapsed .nav-link.active {
+        .sidebar .nav-link.active {
             background-color: rgba(255, 255, 255, 0.15);
             color: white;
         }
 
         .sidebar-header {
-            padding: 2rem 1.5rem;
+            padding: 1.5rem 1rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
+            text-align: center;
         }
         
         .sidebar-toggle-btn {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 0.75rem;
+            right: 0.5rem;
             background: rgba(255, 255, 255, 0.1);
             border: none;
             color: white;
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 0.75rem;
         }
         
         .sidebar-toggle-btn:hover {
@@ -111,39 +126,43 @@
         }
         
         .sidebar.collapsed .sidebar-toggle-btn {
-            right: 0.5rem;
+            right: 0.25rem;
         }
 
         .sidebar-header h3 {
             color: white;
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             margin: 0;
+            line-height: 1.2;
         }
 
         .sidebar-header p {
             color: rgba(255, 255, 255, 0.8);
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin: 0.25rem 0 0 0;
         }
 
         .sidebar-nav {
-            padding: 1rem 0;
+            padding: 0.5rem 0;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
         }
 
         .nav-item {
-            margin: 0.25rem 0;
+            margin: 0.125rem 0;
         }
 
         .nav-link {
             display: flex;
             align-items: center;
-            padding: 0.875rem 1.5rem;
+            padding: 0.75rem 1rem;
             color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
             white-space: nowrap;
+            font-size: 0.875rem;
         }
 
         .nav-link:hover {
@@ -161,7 +180,7 @@
         .nav-link i {
             width: 20px;
             margin-right: 0.75rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
             text-align: center;
         }
 
@@ -171,13 +190,15 @@
 
         /* Main Content */
         .main-content {
-            margin-left: 70px;
+            margin-left: 70px; /* Start with margin for collapsed sidebar */
             min-height: 100vh;
             transition: margin-left 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
         
         .main-content.sidebar-expanded {
-            margin-left: 280px;
+            margin-left: 280px; /* Add margin when sidebar is expanded */
         }
 
         /* Top Navigation */
@@ -189,6 +210,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
         }
 
         .top-nav-left {
@@ -274,6 +296,22 @@
         /* Content Area */
         .content {
             padding: 2rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        /* Ensure proper scrolling on mobile */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+                overflow-y: auto;
+            }
+            
+            .main-content {
+                height: 100vh;
+                overflow: hidden;
+            }
         }
 
         /* Cards */
@@ -483,27 +521,68 @@
             font-weight: 500;
         }
 
+        /* Desktop sidebar behavior */
+        @media (min-width: 769px) {
+            .sidebar {
+                width: 70px; /* Desktop: collapsed by default */
+            }
+            
+            .sidebar.expanded {
+                width: 280px; /* Desktop: expanded state */
+            }
+            
+            .main-content {
+                margin-left: 70px; /* Desktop: default margin for collapsed sidebar */
+            }
+            
+            .main-content.sidebar-expanded {
+                margin-left: 280px; /* Desktop: margin for expanded sidebar */
+            }
+        }
+
+        /* Mobile backdrop overlay */
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-100%);
+                transform: translateX(-100%); /* Mobile: hidden by default */
                 width: 280px;
+                z-index: 1050;
             }
             
-            .sidebar.show {
+            .sidebar.show { /* Mobile: shown state */
                 transform: translateX(0);
             }
             
-            .sidebar.collapsed {
+            .sidebar.expanded { /* Mobile: ensure it stays hidden when expanded */
                 transform: translateX(-100%);
                 width: 280px;
             }
             
             .main-content {
-                margin-left: 0;
+                margin-left: 0; /* Mobile: no margin */
+                height: 100vh;
+                overflow: hidden;
             }
             
-            .main-content.sidebar-expanded {
+            .main-content.sidebar-expanded { /* Mobile: no margin when expanded */
                 margin-left: 0;
             }
 
@@ -511,12 +590,13 @@
                 display: block;
             }
             
-            .sidebar-toggle-btn {
+            .sidebar-toggle-btn { /* Hide sidebar button on mobile */
                 display: none;
             }
 
             .content {
                 padding: 1rem;
+                overflow-y: auto;
             }
 
             .top-nav {
@@ -584,8 +664,11 @@
     </style>
 </head>
 <body>
+    <!-- Mobile backdrop overlay -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    
     <!-- Sidebar -->
-    <nav class="sidebar collapsed" id="sidebar">
+    <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <button class="sidebar-toggle-btn" id="sidebarToggleBtn">
                 <i class="fas fa-chevron-right"></i>
@@ -738,15 +821,18 @@
             const mainContent = document.querySelector('.main-content');
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+            const sidebarBackdrop = document.getElementById('sidebarBackdrop');
             
             // Sidebar toggle from top navigation (mobile)
             sidebarToggle.addEventListener('click', function() {
                 if (window.innerWidth <= 768) {
                     // Mobile: show/hide sidebar
                     sidebar.classList.toggle('show');
+                    sidebarBackdrop.classList.toggle('show');
+                    document.body.classList.toggle('sidebar-open'); // Toggle body class
                 } else {
                     // Desktop: expand/collapse sidebar
-                    sidebar.classList.toggle('collapsed');
+                    sidebar.classList.toggle('expanded');
                     mainContent.classList.toggle('sidebar-expanded');
                     updateToggleIcon();
                 }
@@ -755,19 +841,28 @@
             // Sidebar toggle from sidebar button (desktop only)
             sidebarToggleBtn.addEventListener('click', function() {
                 if (window.innerWidth > 768) {
-                    sidebar.classList.toggle('collapsed');
+                    sidebar.classList.toggle('expanded');
                     mainContent.classList.toggle('sidebar-expanded');
                     updateToggleIcon();
+                }
+            });
+            
+            // Backdrop click to close sidebar (mobile)
+            sidebarBackdrop.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('show');
+                    sidebarBackdrop.classList.remove('show');
+                    document.body.classList.remove('sidebar-open'); // Remove body class
                 }
             });
             
             // Update toggle button icon
             function updateToggleIcon() {
                 const icon = sidebarToggleBtn.querySelector('i');
-                if (sidebar.classList.contains('collapsed')) {
-                    icon.className = 'fas fa-chevron-right';
-                } else {
+                if (sidebar.classList.contains('expanded')) {
                     icon.className = 'fas fa-chevron-left';
+                } else {
+                    icon.className = 'fas fa-chevron-right';
                 }
             }
             
@@ -779,6 +874,8 @@
                 if (window.innerWidth <= 768) {
                     if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
                         sidebar.classList.remove('show');
+                        sidebarBackdrop.classList.remove('show');
+                        document.body.classList.remove('sidebar-open'); // Remove body class
                     }
                 }
             });
@@ -786,8 +883,10 @@
             // Handle window resize
             window.addEventListener('resize', function() {
                 if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('collapsed');
+                    sidebar.classList.remove('expanded');
                     mainContent.classList.remove('sidebar-expanded');
+                    sidebarBackdrop.classList.remove('show');
+                    document.body.classList.remove('sidebar-open'); // Remove body class
                 }
             });
         });

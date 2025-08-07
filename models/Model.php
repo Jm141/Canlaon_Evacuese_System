@@ -203,7 +203,7 @@ abstract class Model {
         
         $stmt->execute();
         $result = $stmt->fetch();
-        return $result['count'];
+        return $result['count'] ?? 0;
     }
 
     /**
